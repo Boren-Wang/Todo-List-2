@@ -8,7 +8,7 @@ export class ListScreen extends Component {
     getListName() {
         if (this.props.todoList) {
             let name = this.props.todoList.name;
-            return this.props.todoList.name;
+            return name;
         }
         else
             return "";
@@ -16,8 +16,10 @@ export class ListScreen extends Component {
     getListOwner() {
         if (this.props.todoList) {
             let owner = this.props.todoList.owner;
-            return this.props.todoList.owner;
+            return owner;
         }
+        else
+            return "";
     }
     render() {
         return (
