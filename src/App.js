@@ -17,6 +17,30 @@ class App extends Component {
     currentList: null
   }
 
+  handleChangeName(event) {
+    const newName = event.target.value
+    this.setState(prevState => {
+      return {
+        currentList: {
+          ...prevState.currentList,
+          name: newName
+        }
+      }
+    })
+  }
+
+  handleChangeOwner(event) {
+    const newOwner = event.target.value
+    this.setState(prevState => {
+      return {
+        currentList: {
+          ...prevState.currentList,
+          owner: newOwner
+        }
+      }
+    })
+  }
+
   goHome = () => {
     this.setState({currentScreen: AppScreen.HOME_SCREEN});
     this.setState({currentList: null});
@@ -38,6 +62,8 @@ class App extends Component {
       case AppScreen.LIST_SCREEN:            
         return <ListScreen
           goHome={this.goHome.bind(this)}
+          handleChangeName={this.handleChangeName.bind(this)}
+          handleChangeOwner={this.handleChangeOwner.bind(this)}
           todoList={this.state.currentList} />;
       case AppScreen.ITEM_SCREEN:
         return <ItemScreen />;

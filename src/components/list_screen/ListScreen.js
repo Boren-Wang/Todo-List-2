@@ -2,9 +2,26 @@ import React, { Component } from 'react'
 import ListHeading from './ListHeading'
 import ListItemsTable from './ListItemsTable'
 import ListTrash from './ListTrash'
+import ListModal from "./ListModal"
 import PropTypes from 'prop-types';
 
 export class ListScreen extends Component {
+    state = {
+        showModal: false
+    }
+    toggleModal() {
+        // alert("clicked!");
+        this.setState(prevState => ({
+            showModal: !prevState.showModal
+        }));
+    }
+    handleClickYes() {
+
+    }
+    handleClickNo() {
+        // alert("Clicked!")
+        this.setState({showModal: false})
+    }
     getListName() {
         if (this.props.todoList) {
             let name = this.props.todoList.name;
@@ -25,24 +42,30 @@ export class ListScreen extends Component {
         return (
             <div id="todo_list">
                 <ListHeading goHome={this.props.goHome} />
-                <ListTrash />
+                <ListTrash onClick={this.toggleModal.bind(this)}/>
                 <div id="list_details_container">
                     <div id="list_details_name_container" className="text_toolbar">
                         <span id="list_name_prompt">Name:</span>
                         <input 
                             value={this.getListName()} 
                             type="text" 
-                            id="list_name_textfield" />
+                            id="list_name_textfield" 
+                            onChange={this.props.handleChangeName}/>
                     </div>
                     <div id="list_details_owner_container" className="text_toolbar">
                         <span id="list_owner_prompt">Owner:</span>
                         <input 
                             value={this.getListOwner()}
                             type="text" 
-                            id="list_owner_textfield" />
+                            id="list_owner_textfield" 
+                            onChange={this.props.handleChangeOwner}/>
                     </div>
                 </div>
                 <ListItemsTable todoList={this.props.todoList} />
+                <ListModal 
+                    showModal={this.state.showModal}
+                    handleClickYes={this.handleClickYes.bind(this)}
+                    handleClickNo={this.handleClickNo.bind(this)} />
             </div>
         )
     }
