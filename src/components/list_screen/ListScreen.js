@@ -15,9 +15,6 @@ export class ListScreen extends Component {
             showModal: !prevState.showModal
         }));
     }
-    handleClickYes() {
-
-    }
     handleClickNo() {
         // alert("Clicked!")
         this.setState({showModal: false})
@@ -64,7 +61,7 @@ export class ListScreen extends Component {
                 <ListItemsTable todoList={this.props.todoList} />
                 <ListModal 
                     showModal={this.state.showModal}
-                    handleClickYes={this.handleClickYes.bind(this)}
+                    handleClickYes={this.props.handleClickYes}
                     handleClickNo={this.handleClickNo.bind(this)} />
             </div>
         )

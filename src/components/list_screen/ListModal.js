@@ -10,6 +10,7 @@ class ListModal extends React.Component {
         }else {
             dialogClass += "slide_out"
             foolProofClass += "is_not_visible"
+            
         }
         return (
             <div>

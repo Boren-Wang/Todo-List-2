@@ -20,11 +20,16 @@ class App extends Component {
   handleChangeName(event) {
     const newName = event.target.value
     this.setState(prevState => {
-      return {
-        currentList: {
-          ...prevState.currentList,
-          name: newName
+      let updatedTodoLists = prevState.todoLists
+      let currentList = prevState.currentList
+      for(let i=0; i<updatedTodoLists.length; i++){
+        if(updatedTodoLists[i].key === currentList.key){
+          updatedTodoLists[i].name = newName
+          break;
         }
+      }
+      return {
+        todoLists: updatedTodoLists
       }
     })
   }
@@ -32,13 +37,33 @@ class App extends Component {
   handleChangeOwner(event) {
     const newOwner = event.target.value
     this.setState(prevState => {
-      return {
-        currentList: {
-          ...prevState.currentList,
-          owner: newOwner
+      let updatedTodoLists = prevState.todoLists
+      let currentList = prevState.currentList
+      for(let i=0; i<updatedTodoLists.length; i++){
+        if(updatedTodoLists[i].key === currentList.key){
+          updatedTodoLists[i].owner = newOwner
+          break;
         }
       }
+      return {
+        todoLists: updatedTodoLists
+      }
     })
+  }
+
+  handleClickYes() {
+    this.setState(prevState => {
+        let updatedTodoLists = prevState.todoLists
+        for(let i=0; i<updatedTodoLists.length; i++){
+            if(updatedTodoLists[i].key === prevState.currentList.key){
+                updatedTodoLists.splice(i, 1)
+            }
+        }
+        return {
+            todoLists: updatedTodoLists
+        }
+    })
+    this.goHome()
   }
 
   goHome = () => {
@@ -64,7 +89,9 @@ class App extends Component {
           goHome={this.goHome.bind(this)}
           handleChangeName={this.handleChangeName.bind(this)}
           handleChangeOwner={this.handleChangeOwner.bind(this)}
-          todoList={this.state.currentList} />;
+          handleClickYes={this.handleClickYes.bind(this)}
+          todoList={this.state.currentList} 
+          />;
       case AppScreen.ITEM_SCREEN:
         return <ItemScreen />;
       default:
