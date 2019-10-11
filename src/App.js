@@ -66,6 +66,23 @@ class App extends Component {
     this.goHome()
   }
 
+  handleClickCreate() {
+    let newList = {
+        "key": this.state.todoLists.length,
+        "name": "Unknown",
+        "owner": "Unknown",
+        "items": []
+    }
+    this.setState(prevState => {
+      let updatedTodoLists = prevState.todoLists
+      updatedTodoLists.unshift(newList)
+      return {
+        todoLists: updatedTodoLists
+      }
+    })
+    this.loadList(newList)
+  }
+
   goHome = () => {
     this.setState({currentScreen: AppScreen.HOME_SCREEN});
     this.setState({currentList: null});
@@ -83,7 +100,8 @@ class App extends Component {
       case AppScreen.HOME_SCREEN:
         return <HomeScreen 
         loadList={this.loadList.bind(this)} 
-        todoLists={this.state.todoLists} />;
+        todoLists={this.state.todoLists}
+        handleClickCreate={this.handleClickCreate.bind(this)} />;
       case AppScreen.LIST_SCREEN:            
         return <ListScreen
           goHome={this.goHome.bind(this)}
