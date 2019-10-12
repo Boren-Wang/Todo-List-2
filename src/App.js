@@ -88,6 +88,9 @@ class App extends Component {
   handleClickUp(todoList, key, event) {
     // alert("clicked!")
     event.stopPropagation()
+    if(event.target.className.includes("disabled")){
+      return
+    }
     this.setState(prevState => {
       let items = todoList.items
       console.log(items)
@@ -115,6 +118,9 @@ class App extends Component {
   handleClickDown(todoList, key, event) {
     // alert("clicked!")
     event.stopPropagation()
+    if(event.target.className.includes("disabled")){
+      return
+    }
     console.log(todoList)
     console.log(key)
     this.setState(prevState => {

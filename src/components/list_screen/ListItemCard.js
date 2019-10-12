@@ -6,6 +6,13 @@ import remove from "../../images/RemoveItem.png"
 export class ListItemCard extends Component {
     render() {
         // console.log(this.props.todoList)
+        let upClass = "list_item_card_button"
+        let downClass = "list_item_card_button"
+        if(this.props.proof==="upProof"){
+            upClass += " disabled"
+        } else if(this.props.proof==="downProof") {
+            downClass += " disabled"
+        }
         return (
             <div className='list_item_card'>
                 <div className='list_item_card_description'>
@@ -22,8 +29,8 @@ export class ListItemCard extends Component {
                 </div>
 
                 <div className="list_item_card_toolbar">
-                    <img className="list_item_card_button" src={up} onClick={(event) => this.props.handleClickUp(this.props.todoList, this.props.listItem.key, event)}></img>
-                    <img className="list_item_card_button" src={down} onClick={(event) => this.props.handleClickDown(this.props.todoList, this.props.listItem.key, event)}></img>
+                    <img className={upClass} src={up} onClick={(event) => this.props.handleClickUp(this.props.todoList, this.props.listItem.key, event)}></img>
+                    <img className={downClass} src={down} onClick={(event) => this.props.handleClickDown(this.props.todoList, this.props.listItem.key, event)}></img>
                     <img className="list_item_card_button" src={remove} onClick={(event)=>this.props.handleClickRemove(this.props.todoList, this.props.listItem.key, event)}></img>
                 </div> 
             </div>
