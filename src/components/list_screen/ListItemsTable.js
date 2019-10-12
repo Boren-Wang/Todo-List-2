@@ -3,6 +3,7 @@ import ListItemCard from './ListItemCard'
 
 export class ListItemsTable extends Component {
     render() {
+        // console.log(this.props.todoList)
         return (
             <div id="list_items_container">
                 <div className="list_item_header_card">
@@ -14,7 +15,11 @@ export class ListItemsTable extends Component {
                     this.props.todoList.items.map((todoItem)=>(
                         <ListItemCard 
                             key={todoItem.key}
+                            todoList={this.props.todoList}
                             listItem={todoItem}
+                            handleClickUp={this.props.handleClickUp}
+                            handleClickDown={this.props.handleClickDown}
+                            handleClickRemove={this.props.handleClickRemove}
                         />
                     ))
                 }

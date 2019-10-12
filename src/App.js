@@ -83,6 +83,95 @@ class App extends Component {
     this.loadList(newList)
   }
 
+  handleClickUp(todoList, key) {
+    // alert("clicked!")
+    this.setState(prevState => {
+      let items = todoList.items
+      console.log(items)
+      for(let i=0; i<items.length; i++){
+        if(items[i].key===key){
+          this.swap(items, i, i-1)
+          break;
+        }
+      }
+      console.log(items)
+
+      let updatedTodoLists = prevState.todoLists
+      for(let i=0; i<updatedTodoLists.length; i++){
+        if(updatedTodoLists[i].key===todoList.key){
+          updatedTodoLists[i]=todoList
+        }
+      }
+
+      return {
+        todoLists: updatedTodoLists
+      }
+    })
+  }
+
+  handleClickDown(todoList, key) {
+    // alert("clicked!")
+    console.log(todoList)
+    console.log(key)
+    this.setState(prevState => {
+      let items = todoList.items
+      // console.log(items)
+      for(let i=0; i<items.length; i++){
+        if(items[i].key===key){
+          this.swap(items, i, i+1)
+          break;
+        }
+      }
+      // console.log(items)
+
+      let updatedTodoLists = prevState.todoLists
+      for(let i=0; i<updatedTodoLists.length; i++){
+        if(updatedTodoLists[i].key===todoList.key){
+          updatedTodoLists[i]=todoList
+        }
+      }
+
+      return {
+        todoLists: updatedTodoLists
+      }
+    })
+  }
+
+  swap(items, i, j) {
+    const temp = items[i]
+    items[i] = items[j]
+    items[j] = temp
+  }
+
+  handleClickRemove(todoList, key) {
+    // alert("clicked!")
+    // console.log(todoList)
+    // console.log(key)
+    this.setState(prevState => {
+      let items = todoList.items
+      for(let i=0; i<items.length; i++){
+        if(items[i].key===key){
+          items.splice(i, 1)
+        }
+      }
+
+      // items=[]
+      // todoList.items = []
+      // items[0].description = "!!!"
+      
+      let updatedTodoLists = prevState.todoLists
+      for(let i=0; i<updatedTodoLists.length; i++){
+        if(updatedTodoLists[i].key===todoList.key){
+          updatedTodoLists[i]=todoList
+        }
+      }
+
+      return {
+        todoLists: updatedTodoLists
+      }
+    })
+  }
+
   goHome = () => {
     this.setState({currentScreen: AppScreen.HOME_SCREEN});
     this.setState({currentList: null});
@@ -108,6 +197,9 @@ class App extends Component {
           handleChangeName={this.handleChangeName.bind(this)}
           handleChangeOwner={this.handleChangeOwner.bind(this)}
           handleClickYes={this.handleClickYes.bind(this)}
+          handleClickUp={this.handleClickUp.bind(this)}
+          handleClickDown={this.handleClickDown.bind(this)}
+          handleClickRemove={this.handleClickRemove.bind(this)}
           todoList={this.state.currentList} 
           />;
       case AppScreen.ITEM_SCREEN:

@@ -58,7 +58,12 @@ export class ListScreen extends Component {
                             onChange={this.props.handleChangeOwner}/>
                     </div>
                 </div>
-                <ListItemsTable todoList={this.props.todoList} />
+                <ListItemsTable 
+                    todoList={this.props.todoList}
+                    handleClickUp={this.props.handleClickUp}
+                    handleClickDown={this.props.handleClickDown}
+                    handleClickRemove={this.props.handleClickRemove}
+                />
                 <ListModal 
                     showModal={this.state.showModal}
                     handleClickYes={this.props.handleClickYes}
