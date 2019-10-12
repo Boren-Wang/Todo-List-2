@@ -13,14 +13,16 @@ export class ListItemsTable extends Component {
                 </div>
                 {
                     this.props.todoList.items.map((todoItem)=>(
-                        <ListItemCard 
-                            key={todoItem.key}
-                            todoList={this.props.todoList}
-                            listItem={todoItem}
-                            handleClickUp={this.props.handleClickUp}
-                            handleClickDown={this.props.handleClickDown}
-                            handleClickRemove={this.props.handleClickRemove}
-                        />
+                        <div onClick={()=>this.props.handleEditItem(todoItem)}>
+                            <ListItemCard 
+                                key={todoItem.key}
+                                todoList={this.props.todoList}
+                                listItem={todoItem}
+                                handleClickUp={this.props.handleClickUp}
+                                handleClickDown={this.props.handleClickDown}
+                                handleClickRemove={this.props.handleClickRemove}
+                            />
+                        </div>     
                     ))
                 }
             </div>

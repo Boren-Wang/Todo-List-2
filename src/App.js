@@ -14,7 +14,9 @@ class App extends Component {
   state = {
     currentScreen: AppScreen.HOME_SCREEN,
     todoLists: testTodoListData.todoLists,
-    currentList: null
+    currentList: null,
+    itemScreen: "",
+    todoItem: null
   }
 
   handleChangeName(event) {
@@ -83,8 +85,9 @@ class App extends Component {
     this.loadList(newList)
   }
 
-  handleClickUp(todoList, key) {
+  handleClickUp(todoList, key, event) {
     // alert("clicked!")
+    event.stopPropagation()
     this.setState(prevState => {
       let items = todoList.items
       console.log(items)
@@ -109,8 +112,9 @@ class App extends Component {
     })
   }
 
-  handleClickDown(todoList, key) {
+  handleClickDown(todoList, key, event) {
     // alert("clicked!")
+    event.stopPropagation()
     console.log(todoList)
     console.log(key)
     this.setState(prevState => {
@@ -143,10 +147,11 @@ class App extends Component {
     items[j] = temp
   }
 
-  handleClickRemove(todoList, key) {
+  handleClickRemove(todoList, key, event) {
     // alert("clicked!")
     // console.log(todoList)
     // console.log(key)
+    event.stopPropagation()
     this.setState(prevState => {
       let items = todoList.items
       for(let i=0; i<items.length; i++){
@@ -172,6 +177,64 @@ class App extends Component {
     })
   }
 
+  handleCreateItem() {
+    let item = {
+      "key": this.state.currentList.items.length,
+      "description": "",
+      "due_date": "",
+      "assigned_to": "",
+      "completed": false
+    }
+    this.setState({
+      itemScreen: "CREATE",
+      todoItem: item
+    })
+    this.goItem()
+  }
+  
+  handleEditItem(item) {
+    // alert("clicked!")
+    this.setState({
+      itemScreen: "EDIT",
+      todoItem: item
+    })
+    this.goItem()
+  }
+
+  handleSubmit(item) {
+    this.setState(prevState => {
+      if(prevState.itemScreen==="CREATE"){
+        prevState.currentList.items.push(item)
+      } else {
+        for(let i=0; i<prevState.currentList.items.length; i++){
+          if(prevState.currentList.items[i].key===item.key){
+            prevState.currentList.items[i] = item
+            // console.log(item)
+            // console.log(prevState.currentList.items)
+            break
+          }
+        }
+      }
+
+      let updatedTodoLists = prevState.todoLists
+      for(let i=0; i<updatedTodoLists.length; i++){
+        if(updatedTodoLists[i].key === prevState.currentList.key){
+          updatedTodoLists[i] = prevState.currentList
+          break
+        }
+      }
+
+      return {
+        todoLists: updatedTodoLists
+      }
+    })
+    this.loadList(this.state.currentList)
+  }
+
+  handleCancel() {
+    this.loadList(this.state.currentList)
+  }
+
   goHome = () => {
     this.setState({currentScreen: AppScreen.HOME_SCREEN});
     this.setState({currentList: null});
@@ -184,6 +247,10 @@ class App extends Component {
     console.log("currentScreen: " + this.state.currentScreen);
   }
 
+  goItem() {
+    this.setState({currentScreen: AppScreen.ITEM_SCREEN});
+  }
+
   render() {
     switch(this.state.currentScreen) {
       case AppScreen.HOME_SCREEN:
@@ -194,16 +261,23 @@ class App extends Component {
       case AppScreen.LIST_SCREEN:            
         return <ListScreen
           goHome={this.goHome.bind(this)}
+          todoList={this.state.currentList} 
           handleChangeName={this.handleChangeName.bind(this)}
           handleChangeOwner={this.handleChangeOwner.bind(this)}
           handleClickYes={this.handleClickYes.bind(this)}
           handleClickUp={this.handleClickUp.bind(this)}
           handleClickDown={this.handleClickDown.bind(this)}
           handleClickRemove={this.handleClickRemove.bind(this)}
-          todoList={this.state.currentList} 
+          handleCreateItem={this.handleCreateItem.bind(this)}
+          handleEditItem={this.handleEditItem.bind(this)}
           />;
       case AppScreen.ITEM_SCREEN:
-        return <ItemScreen />;
+        return <ItemScreen 
+          itemScreen={this.state.itemScreen}
+          todoItem={this.state.todoItem}
+          handleSubmit={this.handleSubmit.bind(this)}
+          handleCancel={this.handleCancel.bind(this)}
+        />;
       default:
         return <div>ERROR</div>;
     }

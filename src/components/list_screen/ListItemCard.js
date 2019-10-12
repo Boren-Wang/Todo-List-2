@@ -22,9 +22,9 @@ export class ListItemCard extends Component {
                 </div>
 
                 <div className="list_item_card_toolbar">
-                    <img className="list_item_card_button" src={up} onClick={() => this.props.handleClickUp(this.props.todoList, this.props.listItem.key)}></img>
-                    <img className="list_item_card_button" src={down} onClick={() => this.props.handleClickDown(this.props.todoList, this.props.listItem.key)}></img>
-                    <img className="list_item_card_button" src={remove} onClick={()=>this.props.handleClickRemove(this.props.todoList, this.props.listItem.key)}></img>
+                    <img className="list_item_card_button" src={up} onClick={(event) => this.props.handleClickUp(this.props.todoList, this.props.listItem.key, event)}></img>
+                    <img className="list_item_card_button" src={down} onClick={(event) => this.props.handleClickDown(this.props.todoList, this.props.listItem.key, event)}></img>
+                    <img className="list_item_card_button" src={remove} onClick={(event)=>this.props.handleClickRemove(this.props.todoList, this.props.listItem.key, event)}></img>
                 </div> 
             </div>
         )

@@ -4,10 +4,11 @@ import ListItemsTable from './ListItemsTable'
 import ListTrash from './ListTrash'
 import ListModal from "./ListModal"
 import PropTypes from 'prop-types';
+import add from "../../images/AddItem.png"
 
 export class ListScreen extends Component {
     state = {
-        showModal: false
+        showModal: false,
     }
     toggleModal() {
         // alert("clicked!");
@@ -19,6 +20,7 @@ export class ListScreen extends Component {
         // alert("Clicked!")
         this.setState({showModal: false})
     }
+
     getListName() {
         if (this.props.todoList) {
             let name = this.props.todoList.name;
@@ -63,7 +65,11 @@ export class ListScreen extends Component {
                     handleClickUp={this.props.handleClickUp}
                     handleClickDown={this.props.handleClickDown}
                     handleClickRemove={this.props.handleClickRemove}
+                    handleEditItem={this.props.handleEditItem}
                 />
+                <div className="list_item_add_card">
+                    <img id="list_item_add_card" src={add} onClick={()=>this.props.handleCreateItem(this.props.todoList)}></img>
+                </div>
                 <ListModal 
                     showModal={this.state.showModal}
                     handleClickYes={this.props.handleClickYes}
