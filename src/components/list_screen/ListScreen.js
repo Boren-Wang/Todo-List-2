@@ -66,6 +66,9 @@ export class ListScreen extends Component {
                     handleClickDown={this.props.handleClickDown}
                     handleClickRemove={this.props.handleClickRemove}
                     handleEditItem={this.props.handleEditItem}
+                    processSortItemsByTask={this.props.processSortItemsByTask}
+                    processSortItemsByDueDate={this.props.processSortItemsByDueDate}
+                    processSortItemsByStatus={this.props.processSortItemsByStatus}
                 />
                 <div className="list_item_add_card">
                     <img id="list_item_add_card" src={add} onClick={()=>this.props.handleCreateItem(this.props.todoList)}></img>
