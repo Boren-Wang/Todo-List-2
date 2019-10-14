@@ -10,6 +10,15 @@ export class ListScreen extends Component {
     state = {
         showModal: false,
     }
+
+    componentDidMount() {
+        document.addEventListener('keydown', this.props.handleKeyPress);
+    }
+    
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.props.handleKeyPress);
+    }
+
     toggleModal() {
         // alert("clicked!");
         this.setState(prevState => ({

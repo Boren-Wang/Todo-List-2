@@ -3,6 +3,8 @@ import testTodoListData from './TestTodoListData.json'
 import HomeScreen from './components/home_screen/HomeScreen'
 import ItemScreen from './components/item_screen/ItemScreen'
 import ListScreen from './components/list_screen/ListScreen'
+import {jsTPS} from "./lib/jsTPS.js"
+import {NameChangeTransaction, OwnerChangeTransaction} from "./Transactions.js"
 
 const AppScreen = {
   HOME_SCREEN: "HOME_SCREEN",
@@ -19,6 +21,8 @@ const ItemSortCriteria = {
   SORT_BY_STATUS_DECREASING: "sort_by_status_decreasing"
 };
 
+let tps = new jsTPS()
+
 class App extends Component {
   state = {
     currentScreen: AppScreen.HOME_SCREEN,
@@ -26,41 +30,58 @@ class App extends Component {
     currentList: null,
     itemScreen: "",
     todoItem: null,
-    currentItemSortCriteria: ""
+    currentItemSortCriteria: "",
   }
 
   handleChangeName(event) {
     const newName = event.target.value
-    this.setState(prevState => {
-      let updatedTodoLists = prevState.todoLists
-      let currentList = prevState.currentList
-      for(let i=0; i<updatedTodoLists.length; i++){
-        if(updatedTodoLists[i].key === currentList.key){
-          updatedTodoLists[i].name = newName
-          break;
-        }
-      }
-      return {
-        todoLists: updatedTodoLists
-      }
-    })
+    const oldName = this.state.currentList.name
+    tps.addTransaction(new NameChangeTransaction(newName, oldName, this))
+    // this.setState(prevState => {
+    //   let updatedTodoLists = prevState.todoLists
+    //   let currentList = prevState.currentList
+    //   for(let i=0; i<updatedTodoLists.length; i++){
+    //     if(updatedTodoLists[i].key === currentList.key){
+    //       updatedTodoLists[i].name = newName
+    //       break;
+    //     }
+    //   }
+    //   return {
+    //     todoLists: updatedTodoLists
+    //   }
+    // })
   }
 
   handleChangeOwner(event) {
     const newOwner = event.target.value
-    this.setState(prevState => {
-      let updatedTodoLists = prevState.todoLists
-      let currentList = prevState.currentList
-      for(let i=0; i<updatedTodoLists.length; i++){
-        if(updatedTodoLists[i].key === currentList.key){
-          updatedTodoLists[i].owner = newOwner
-          break;
-        }
-      }
-      return {
-        todoLists: updatedTodoLists
-      }
-    })
+    const oldOwner = this.state.currentList.owner
+    tps.addTransaction(new OwnerChangeTransaction(newOwner, oldOwner, this))
+    // this.setState(prevState => {
+    //   let updatedTodoLists = prevState.todoLists
+    //   let currentList = prevState.currentList
+    //   for(let i=0; i<updatedTodoLists.length; i++){
+    //     if(updatedTodoLists[i].key === currentList.key){
+    //       updatedTodoLists[i].owner = newOwner
+    //       break;
+    //     }
+    //   }
+    //   return {
+    //     todoLists: updatedTodoLists
+    //   }
+    // })
+  }
+
+  handleKeyPress(e) {
+    if (e.keyCode === 90 && e.ctrlKey) { // control + z
+        console.log(tps.getSummary())
+        tps.undoTransaction()
+        console.log(tps.getSummary())
+    }
+    else if(e.keyCode === 89 && e.ctrlKey) { // control + y
+        console.log(tps.getSummary())
+        tps.doTransaction()
+        console.log(tps.getSummary())
+    }
   }
 
   handleClickYes() {
@@ -404,6 +425,7 @@ class App extends Component {
           processSortItemsByTask={this.processSortItemsByTask.bind(this)}
           processSortItemsByDueDate={this.processSortItemsByDueDate.bind(this)}
           processSortItemsByStatus={this.processSortItemsByStatus.bind(this)}
+          handleKeyPress={this.handleKeyPress}
           />;
       case AppScreen.ITEM_SCREEN:
         return <ItemScreen 
