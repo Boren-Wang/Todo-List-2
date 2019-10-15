@@ -89,7 +89,275 @@ class OwnerChangeTransaction extends jsTPS_Transaction{
     }
 }
 
+class UpTransaction extends jsTPS_Transaction {
+    constructor(todoList, key, app) {
+        super()
+        this.todoList = todoList
+        this.key = key
+        this.app = app
+    }
+
+    doTransaction() {
+        this.app.setState(prevState => {
+            let items = this.todoList.items
+            // console.log(items)
+            for(let i=0; i<items.length; i++){
+              if(items[i].key===this.key){
+                this.app.swap(items, i, i-1)
+                break;
+              }
+            }
+            // console.log(items)
+      
+            let updatedTodoLists = prevState.todoLists
+            for(let i=0; i<updatedTodoLists.length; i++){
+              if(updatedTodoLists[i].key===this.todoList.key){
+                updatedTodoLists[i]=this.todoList
+              }
+            }
+      
+            return {
+              todoLists: updatedTodoLists
+            }
+          })
+    }
+
+    undoTransaction() {
+        this.app.setState(prevState => {
+            let items = this.todoList.items
+            // console.log(items)
+            for(let i=0; i<items.length; i++){
+              if(items[i].key===this.key){
+                this.app.swap(items, i, i+1)
+                break;
+              }
+            }
+            // console.log(items)
+      
+            let updatedTodoLists = prevState.todoLists
+            for(let i=0; i<updatedTodoLists.length; i++){
+              if(updatedTodoLists[i].key===this.todoList.key){
+                updatedTodoLists[i]=this.todoList
+              }
+            }
+      
+            return {
+              todoLists: updatedTodoLists
+            }
+        })
+    }
+}
+
+class DownTransaction extends jsTPS_Transaction {
+    constructor(todoList, key, app) {
+        super()
+        this.todoList = todoList
+        this.key = key
+        this.app = app
+    }
+
+    doTransaction() {
+        this.app.setState(prevState => {
+            let items = this.todoList.items
+            // console.log(items)
+            for(let i=0; i<items.length; i++){
+              if(items[i].key===this.key){
+                this.app.swap(items, i, i+1)
+                break;
+              }
+            }
+            // console.log(items)
+      
+            let updatedTodoLists = prevState.todoLists
+            for(let i=0; i<updatedTodoLists.length; i++){
+              if(updatedTodoLists[i].key===this.todoList.key){
+                updatedTodoLists[i]=this.todoList
+              }
+            }
+      
+            return {
+              todoLists: updatedTodoLists
+            }
+          })
+    }
+
+    undoTransaction() {
+        this.app.setState(prevState => {
+            let items = this.todoList.items
+            // console.log(items)
+            for(let i=0; i<items.length; i++){
+              if(items[i].key===this.key){
+                this.app.swap(items, i, i-1)
+                break;
+              }
+            }
+            // console.log(items)
+      
+            let updatedTodoLists = prevState.todoLists
+            for(let i=0; i<updatedTodoLists.length; i++){
+              if(updatedTodoLists[i].key===this.todoList.key){
+                updatedTodoLists[i]=this.todoList
+              }
+            }
+      
+            return {
+              todoLists: updatedTodoLists
+            }
+          })
+    }
+}
+
+class RemoveTransaction extends jsTPS_Transaction {
+    constructor(todoList, index, app) {
+        super()
+        this.todoList = todoList
+        this.index = index
+        this.app = app
+        this.item = {}
+    }
+
+    doTransaction() {
+        this.app.setState(prevState => {
+            let items = this.todoList.items
+            this.item = items[this.index]
+            items.splice(this.index, 1)
+            let updatedTodoLists = prevState.todoLists
+            for(let i=0; i<updatedTodoLists.length; i++){
+                if(updatedTodoLists[i].key===this.todoList.key){
+                updatedTodoLists[i]=this.todoList
+                }
+            }
+
+            return {
+                todoLists: updatedTodoLists
+            }
+        })
+    }
+
+    undoTransaction() {
+        this.app.setState(prevState => {
+            let items = this.todoList.items
+            items.splice(this.index, 0, this.item)
+            let updatedTodoLists = prevState.todoLists
+            for(let i=0; i<updatedTodoLists.length; i++){
+                if(updatedTodoLists[i].key===this.todoList.key){
+                updatedTodoLists[i]=this.todoList
+                }
+            }
+
+            return {
+                todoLists: updatedTodoLists
+            }
+        })
+    }
+}
+
+class AddTransaction extends jsTPS_Transaction {
+    constructor(item, app) {
+        super()
+        this.item = item
+        this.app = app
+    }
+
+    doTransaction() {
+        this.app.setState(prevState => {
+            prevState.currentList.items.push(this.item)
+            let updatedTodoLists = prevState.todoLists
+            for(let i=0; i<updatedTodoLists.length; i++){
+                if(updatedTodoLists[i].key === prevState.currentList.key){
+                updatedTodoLists[i] = prevState.currentList
+                break
+                }
+            }
+            return {
+                todoLists: updatedTodoLists
+            }
+        })
+    }
+
+    undoTransaction() {
+        this.app.setState(prevState => {
+            prevState.currentList.items.pop()
+            let updatedTodoLists = prevState.todoLists
+            for(let i=0; i<updatedTodoLists.length; i++){
+                if(updatedTodoLists[i].key === prevState.currentList.key){
+                updatedTodoLists[i] = prevState.currentList
+                break
+                }
+            }
+            return {
+                todoLists: updatedTodoLists
+            }
+        })
+    }
+}
+
+class EditTransaction extends jsTPS_Transaction {
+    constructor(item, app) {
+        super()
+        this.newItem = item
+        this.app = app
+        this.oldItem = {}
+    }
+
+    doTransaction() {
+        this.app.setState(prevState => {
+            for(let i=0; i<prevState.currentList.items.length; i++){
+                if(prevState.currentList.items[i].key===this.newItem.key){
+                    this.oldItem = prevState.currentList.items[i]
+                    prevState.currentList.items[i] = this.newItem
+                    // console.log(item)
+                    // console.log(prevState.currentList.items)
+                    break
+                }
+            }
+            
+            let updatedTodoLists = prevState.todoLists
+            for(let i=0; i<updatedTodoLists.length; i++){
+              if(updatedTodoLists[i].key === prevState.currentList.key){
+                updatedTodoLists[i] = prevState.currentList
+                break
+              }
+            }
+      
+            return {
+              todoLists: updatedTodoLists
+            }
+        })
+    }
+
+    undoTransaction() {
+        this.app.setState(prevState => {
+            for(let i=0; i<prevState.currentList.items.length; i++){
+                if(prevState.currentList.items[i].key===this.newItem.key){
+                    prevState.currentList.items[i] = this.oldItem
+                    // console.log(item)
+                    // console.log(prevState.currentList.items)
+                    break
+                }
+            }
+            
+            let updatedTodoLists = prevState.todoLists
+            for(let i=0; i<updatedTodoLists.length; i++){
+              if(updatedTodoLists[i].key === prevState.currentList.key){
+                updatedTodoLists[i] = prevState.currentList
+                break
+              }
+            }
+      
+            return {
+              todoLists: updatedTodoLists
+            }
+        })
+    }
+}
+
 export {
     NameChangeTransaction,
-    OwnerChangeTransaction
+    OwnerChangeTransaction,
+    UpTransaction,
+    DownTransaction,
+    RemoveTransaction,
+    AddTransaction,
+    EditTransaction
 }

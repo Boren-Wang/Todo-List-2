@@ -4,7 +4,7 @@ import HomeScreen from './components/home_screen/HomeScreen'
 import ItemScreen from './components/item_screen/ItemScreen'
 import ListScreen from './components/list_screen/ListScreen'
 import {jsTPS} from "./lib/jsTPS.js"
-import {NameChangeTransaction, OwnerChangeTransaction} from "./Transactions.js"
+import {NameChangeTransaction, OwnerChangeTransaction, UpTransaction, DownTransaction, RemoveTransaction, AddTransaction, EditTransaction} from "./Transactions.js"
 
 const AppScreen = {
   HOME_SCREEN: "HOME_SCREEN",
@@ -31,6 +31,14 @@ class App extends Component {
     itemScreen: "",
     todoItem: null,
     currentItemSortCriteria: "",
+    showModal: "INVISIBLE"
+  }
+
+  toggleModal() {
+    // alert("clicked!");
+    this.setState(prevState => ({
+        showModal: true
+    }));
   }
 
   handleChangeName(event) {
@@ -73,14 +81,14 @@ class App extends Component {
 
   handleKeyPress(e) {
     if (e.keyCode === 90 && e.ctrlKey) { // control + z
-        console.log(tps.getSummary())
+        // console.log(tps.getSummary())
         tps.undoTransaction()
-        console.log(tps.getSummary())
+        // console.log(tps.getSummary())
     }
     else if(e.keyCode === 89 && e.ctrlKey) { // control + y
-        console.log(tps.getSummary())
+        // console.log(tps.getSummary())
         tps.doTransaction()
-        console.log(tps.getSummary())
+        // console.log(tps.getSummary())
     }
   }
 
@@ -97,6 +105,11 @@ class App extends Component {
         }
     })
     this.goHome()
+  }
+
+  handleClickNo() {
+    // alert("Clicked!")
+    this.setState({showModal: false})
   }
 
   handleClickCreate() {
@@ -122,28 +135,28 @@ class App extends Component {
     if(event.target.className.includes("disabled")){
       return
     }
-    this.setState(prevState => {
-      let items = todoList.items
-      console.log(items)
-      for(let i=0; i<items.length; i++){
-        if(items[i].key===key){
-          this.swap(items, i, i-1)
-          break;
-        }
-      }
-      console.log(items)
+    tps.addTransaction(new UpTransaction(todoList, key, this))
+    // this.setState(prevState => {
+    //   let items = todoList.items
+    //   for(let i=0; i<items.length; i++){
+    //     if(items[i].key===key){
+    //       this.swap(items, i, i-1)
+    //       break;
+    //     }
+    //   }
+    //   console.log(items)
 
-      let updatedTodoLists = prevState.todoLists
-      for(let i=0; i<updatedTodoLists.length; i++){
-        if(updatedTodoLists[i].key===todoList.key){
-          updatedTodoLists[i]=todoList
-        }
-      }
+    //   let updatedTodoLists = prevState.todoLists
+    //   for(let i=0; i<updatedTodoLists.length; i++){
+    //     if(updatedTodoLists[i].key===todoList.key){
+    //       updatedTodoLists[i]=todoList
+    //     }
+    //   }
 
-      return {
-        todoLists: updatedTodoLists
-      }
-    })
+    //   return {
+    //     todoLists: updatedTodoLists
+    //   }
+    // })
   }
 
   handleClickDown(todoList, key, event) {
@@ -152,30 +165,31 @@ class App extends Component {
     if(event.target.className.includes("disabled")){
       return
     }
+    tps.addTransaction(new DownTransaction(todoList, key, this))
     // console.log(todoList)
     // console.log(key)
-    this.setState(prevState => {
-      let items = todoList.items
-      // console.log(items)
-      for(let i=0; i<items.length; i++){
-        if(items[i].key===key){
-          this.swap(items, i, i+1)
-          break;
-        }
-      }
-      // console.log(items)
+    // this.setState(prevState => {
+    //   let items = todoList.items
+    //   // console.log(items)
+    //   for(let i=0; i<items.length; i++){
+    //     if(items[i].key===key){
+    //       this.swap(items, i, i+1)
+    //       break;
+    //     }
+    //   }
+    // console.log(items)
 
-      let updatedTodoLists = prevState.todoLists
-      for(let i=0; i<updatedTodoLists.length; i++){
-        if(updatedTodoLists[i].key===todoList.key){
-          updatedTodoLists[i]=todoList
-        }
-      }
+    //   let updatedTodoLists = prevState.todoLists
+    //   for(let i=0; i<updatedTodoLists.length; i++){
+    //     if(updatedTodoLists[i].key===todoList.key){
+    //       updatedTodoLists[i]=todoList
+    //     }
+    //   }
 
-      return {
-        todoLists: updatedTodoLists
-      }
-    })
+    //   return {
+    //     todoLists: updatedTodoLists
+    //   }
+    // })
   }
 
   swap(items, i, j) {
@@ -189,29 +203,39 @@ class App extends Component {
     // console.log(todoList)
     // console.log(key)
     event.stopPropagation()
-    this.setState(prevState => {
-      let items = todoList.items
-      for(let i=0; i<items.length; i++){
-        if(items[i].key===key){
-          items.splice(i, 1)
-        }
+
+    let i
+    let items = todoList.items
+    for(i=0; i<items.length; i++){
+      if(items[i].key===key){
+        break
       }
+    }
+    // alert("clicked")
+    tps.addTransaction(new RemoveTransaction(todoList, i, this))
+    // this.setState(prevState => {
+    //   let items = todoList.items
+    //   for(let i=0; i<items.length; i++){
+    //     if(items[i].key===key){
+    //       items.splice(i, 1)
+    //     }
+    //   }
 
       // items=[]
       // todoList.items = []
       // items[0].description = "!!!"
       
-      let updatedTodoLists = prevState.todoLists
-      for(let i=0; i<updatedTodoLists.length; i++){
-        if(updatedTodoLists[i].key===todoList.key){
-          updatedTodoLists[i]=todoList
-        }
-      }
+      // let updatedTodoLists = prevState.todoLists
+      // for(let i=0; i<updatedTodoLists.length; i++){
+      //   if(updatedTodoLists[i].key===todoList.key){
+      //     updatedTodoLists[i]=todoList
+      //   }
+      // }
 
-      return {
-        todoLists: updatedTodoLists
-      }
-    })
+      // return {
+      //   todoLists: updatedTodoLists
+      // }
+    // })
   }
 
   handleCreateItem() {
@@ -239,32 +263,38 @@ class App extends Component {
   }
 
   handleSubmit(item) {
-    this.setState(prevState => {
-      if(prevState.itemScreen==="CREATE"){
-        prevState.currentList.items.push(item)
-      } else {
-        for(let i=0; i<prevState.currentList.items.length; i++){
-          if(prevState.currentList.items[i].key===item.key){
-            prevState.currentList.items[i] = item
-            // console.log(item)
-            // console.log(prevState.currentList.items)
-            break
-          }
-        }
-      }
+    if(this.state.itemScreen==="CREATE"){
+      tps.addTransaction(new AddTransaction(item, this))
+    } else if(this.state.itemScreen==="EDIT") {
+      tps.addTransaction(new EditTransaction(item, this))
+    }
 
-      let updatedTodoLists = prevState.todoLists
-      for(let i=0; i<updatedTodoLists.length; i++){
-        if(updatedTodoLists[i].key === prevState.currentList.key){
-          updatedTodoLists[i] = prevState.currentList
-          break
-        }
-      }
+    // this.setState(prevState => {
+    //   if(prevState.itemScreen==="CREATE"){
+    //     prevState.currentList.items.push(item)
+    //   } else {
+    //     for(let i=0; i<prevState.currentList.items.length; i++){
+    //       if(prevState.currentList.items[i].key===item.key){
+    //         prevState.currentList.items[i] = item
+    //         // console.log(item)
+    //         // console.log(prevState.currentList.items)
+    //         break
+    //       }
+    //     }
+    //   }
 
-      return {
-        todoLists: updatedTodoLists
-      }
-    })
+    //   let updatedTodoLists = prevState.todoLists
+    //   for(let i=0; i<updatedTodoLists.length; i++){
+    //     if(updatedTodoLists[i].key === prevState.currentList.key){
+    //       updatedTodoLists[i] = prevState.currentList
+    //       break
+    //     }
+    //   }
+
+    //   return {
+    //     todoLists: updatedTodoLists
+    //   }
+    // })
     this.loadList(this.state.currentList)
   }
 
@@ -390,6 +420,10 @@ class App extends Component {
   goHome = () => {
     this.setState({currentScreen: AppScreen.HOME_SCREEN});
     this.setState({currentList: null});
+    this.setState({showModal: "INVISIBLE"})
+    // console.log(tps.getSummary())
+    tps.clearAllTransactions()
+    // console.log(tps.getSummary())
   }
 
   loadList = (todoListToLoad) => {
@@ -401,6 +435,7 @@ class App extends Component {
 
   goItem() {
     this.setState({currentScreen: AppScreen.ITEM_SCREEN});
+    this.setState({showModal: "INVISIBLE"})
   }
 
   render() {
@@ -417,6 +452,7 @@ class App extends Component {
           handleChangeName={this.handleChangeName.bind(this)}
           handleChangeOwner={this.handleChangeOwner.bind(this)}
           handleClickYes={this.handleClickYes.bind(this)}
+          handleClickNo={this.handleClickNo.bind(this)}
           handleClickUp={this.handleClickUp.bind(this)}
           handleClickDown={this.handleClickDown.bind(this)}
           handleClickRemove={this.handleClickRemove.bind(this)}
@@ -426,6 +462,8 @@ class App extends Component {
           processSortItemsByDueDate={this.processSortItemsByDueDate.bind(this)}
           processSortItemsByStatus={this.processSortItemsByStatus.bind(this)}
           handleKeyPress={this.handleKeyPress}
+          showModal={this.state.showModal}
+          toggleModal={this.toggleModal.bind(this)}
           />;
       case AppScreen.ITEM_SCREEN:
         return <ItemScreen 

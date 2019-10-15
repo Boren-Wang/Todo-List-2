@@ -4,13 +4,15 @@ class ListModal extends React.Component {
     render() {
         let dialogClass=""
         let foolProofClass = ""
-        if(this.props.showModal){
+        if(this.props.showModal===true){
             dialogClass += "is_visible slide_in"
             foolProofClass += "is_visible"
-        }else {
+        }else if(this.props.showModal===false) {
             dialogClass += "slide_out"
             foolProofClass += "is_not_visible"
-            
+        }else if(this.props.showModal==="INVISIBLE") {
+            dialogClass += "is_not_visible"
+            foolProofClass += "is_not_visible"
         }
         return (
             <div>

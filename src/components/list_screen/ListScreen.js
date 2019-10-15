@@ -7,9 +7,9 @@ import PropTypes from 'prop-types';
 import add from "../../images/AddItem.png"
 
 export class ListScreen extends Component {
-    state = {
-        showModal: false,
-    }
+    // state = {
+    //     showModal: false,
+    // }
 
     componentDidMount() {
         document.addEventListener('keydown', this.props.handleKeyPress);
@@ -19,16 +19,12 @@ export class ListScreen extends Component {
         document.removeEventListener('keydown', this.props.handleKeyPress);
     }
 
-    toggleModal() {
-        // alert("clicked!");
-        this.setState(prevState => ({
-            showModal: !prevState.showModal
-        }));
-    }
-    handleClickNo() {
-        // alert("Clicked!")
-        this.setState({showModal: false})
-    }
+    // toggleModal() {
+    //     // alert("clicked!");
+    //     this.setState(prevState => ({
+    //         showModal: !prevState.showModal
+    //     }));
+    // }
 
     getListName() {
         if (this.props.todoList) {
@@ -50,7 +46,7 @@ export class ListScreen extends Component {
         return (
             <div id="todo_list">
                 <ListHeading goHome={this.props.goHome} />
-                <ListTrash onClick={this.toggleModal.bind(this)}/>
+                <ListTrash onClick={this.props.toggleModal}/>
                 <div id="list_details_container">
                     <div id="list_details_name_container" className="text_toolbar">
                         <span id="list_name_prompt">Name:</span>
@@ -83,9 +79,9 @@ export class ListScreen extends Component {
                     <img id="list_item_add_card" src={add} onClick={()=>this.props.handleCreateItem(this.props.todoList)}></img>
                 </div>
                 <ListModal 
-                    showModal={this.state.showModal}
+                    showModal={this.props.showModal}
                     handleClickYes={this.props.handleClickYes}
-                    handleClickNo={this.handleClickNo.bind(this)} />
+                    handleClickNo={this.props.handleClickNo} />
             </div>
         )
     }
