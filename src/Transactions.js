@@ -352,6 +352,47 @@ class EditTransaction extends jsTPS_Transaction {
     }
 }
 
+class SortTransaction extends jsTPS_Transaction {
+  constructor(sortingCriteria, app) {
+    super()
+    this.sortingCriteria = sortingCriteria
+    this.app = app
+    this.oldItems = {}
+  }
+
+  doTransaction() {
+    this.app.setState({
+      currentItemSortCriteria: this.sortingCriteria
+    })
+    this.app.setState(prevState=>{
+      this.oldItems = prevState.currentList.items.slice()
+      // console.log(this.oldItems)
+      prevState.currentList.items.sort(this.app.compare.bind(this.app))
+      // console.log(prevState.currentList.items)
+      let updatedTodoLists = prevState.todoLists
+      for(let i=0; i<updatedTodoLists.length; i++){
+        if(updatedTodoLists[i].key===prevState.currentList) {
+          updatedTodoLists[i] = prevState.currentList
+        }
+      }
+      return updatedTodoLists
+    })
+  }
+
+  undoTransaction() {
+    this.app.setState(prevState=>{
+      prevState.currentList.items = this.oldItems.slice()
+      let updatedTodoLists = prevState.todoLists
+      for(let i=0; i<updatedTodoLists.length; i++){
+        if(updatedTodoLists[i].key===prevState.currentList) {
+          updatedTodoLists[i] = prevState.currentList
+        }
+      }
+      return updatedTodoLists
+    })
+  }
+}
+
 export {
     NameChangeTransaction,
     OwnerChangeTransaction,
@@ -359,5 +400,6 @@ export {
     DownTransaction,
     RemoveTransaction,
     AddTransaction,
-    EditTransaction
+    EditTransaction,
+    SortTransaction
 }

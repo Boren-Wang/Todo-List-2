@@ -4,7 +4,7 @@ import HomeScreen from './components/home_screen/HomeScreen'
 import ItemScreen from './components/item_screen/ItemScreen'
 import ListScreen from './components/list_screen/ListScreen'
 import {jsTPS} from "./lib/jsTPS.js"
-import {NameChangeTransaction, OwnerChangeTransaction, UpTransaction, DownTransaction, RemoveTransaction, AddTransaction, EditTransaction} from "./Transactions.js"
+import {NameChangeTransaction, OwnerChangeTransaction, UpTransaction, DownTransaction, RemoveTransaction, AddTransaction, EditTransaction, SortTransaction} from "./Transactions.js"
 
 const AppScreen = {
   HOME_SCREEN: "HOME_SCREEN",
@@ -241,9 +241,9 @@ class App extends Component {
   handleCreateItem() {
     let item = {
       "key": this.state.currentList.items.length,
-      "description": "",
+      "description": "Unknown",
       "due_date": "",
-      "assigned_to": "",
+      "assigned_to": "Unknown",
       "completed": false
     }
     this.setState({
@@ -308,18 +308,20 @@ class App extends Component {
    * @param {ItemSortCriteria} sortingCriteria Sorting criteria to use.
    */
   sortTasks(sortingCriteria) {
-    this.setState({
-      currentItemSortCriteria: sortingCriteria
-    })
-    this.setState(prevState=>{
-      prevState.currentList.items.sort(this.compare.bind(this))
-      let updatedTodoLists = prevState.todoLists
-      for(let i=0; i<updatedTodoLists.length; i++){
-        if(updatedTodoLists[i].key===prevState.currentList) {
-          updatedTodoLists[i] = prevState.currentList
-        }
-      }
-    })
+    tps.addTransaction(new SortTransaction(sortingCriteria, this))
+    // this.setState({
+    //   currentItemSortCriteria: sortingCriteria
+    // })
+    // this.setState(prevState=>{
+    //   prevState.currentList.items.sort(this.compare.bind(this))
+    //   let updatedTodoLists = prevState.todoLists
+    //   for(let i=0; i<updatedTodoLists.length; i++){
+    //     if(updatedTodoLists[i].key===prevState.currentList) {
+    //       updatedTodoLists[i] = prevState.currentList
+    //     }
+    //   }
+    //   return updatedTodoLists
+    // })
 
     // alert("Sorted!!!");
   }
